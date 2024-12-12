@@ -1,34 +1,70 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from 'react';
+import styles from './app.module.css';
+import data from './data.json';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [steps, setSteps] = useState(data);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const numberOfSteps = steps.length; //Сколько всего шагов
+  
+  const forward = () => {
+    setActiveIndex(activeIndex + 1);
+  }
+
+  const back = () => {
+    setActiveIndex(activeIndex - 1);
+  }
+
+  const reset = () => {
+    setActiveIndex(0);
+  }
+
+  const clickOnButton = (i) => {
+    setActiveIndex(i)
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div className={styles.container}>
+			<div className={styles.card}>
+				<h1>Инструкция по готовке пельменей</h1>
+				<div className={styles.steps}>
+					<div className={styles['steps-content']}>
+						{steps[activeIndex].content}
+					</div>
+					<ul className={styles['steps-list']}>
+            {
+              steps.map((item, i) => (
+                <li 
+                  key={+item.id} 
+                  className={activeIndex === i ? styles['steps-item'] + ' ' + styles.active : styles['steps-item'] && activeIndex >= i ? styles['steps-item'] + ' ' + styles.done : styles['steps-item']}
+                >
+                <button onClick={() => clickOnButton(i)} className={styles['steps-item-button']}>
+                  {+item.id}
+                </button>
+                {item.title}
+                </li>
+              ))
+            }
+
+					</ul>
+					<div className={styles['buttons-container']}>
+						<button 
+              className={styles.button} 
+              disabled={activeIndex === 0 ? true : false} 
+              onClick={back}
+            >
+              Назад
+            </button>
+						<button 
+              className={styles.button} 
+              onClick={activeIndex !== numberOfSteps - 1 ? forward : reset}
+            >
+							{activeIndex !== numberOfSteps - 1 ? 'Далее' : 'Начать сначала'}
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
   )
 }
 
